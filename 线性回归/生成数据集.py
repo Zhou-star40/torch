@@ -45,3 +45,6 @@ batch_size = 10
 for X, y in data_iter(batch_size, features, labels):
     print(X, '\n', y)
     break
+
+w = torch.normal(0, 0.01, size=(2,1), requires_grad=True)
+b = torch.zeros(1, requires_grad=True)
