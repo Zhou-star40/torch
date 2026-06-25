@@ -31,20 +31,43 @@ print('features:', features[0], '\nlabel:', labels[0])
 # d2l.plt.scatter(features[:, (1)].detach().numpy(), labels.detach().numpy(), 1);
 # plt.show()
 
+#我要造一个可以重复使用的小工具
+#batch_size 表示每一批次有多少条样本
+#features 特征矩阵
+#labels 标签向量
+#data_iter 是用来每次取出一小批数据，交给后面的训练过程
+#也就是说他只负责“喂数据”，不负责“学习”
 def data_iter(batch_size, features, labels):
-    num_example = len(features)
+    num_example = len(features) #len函数
+    #生成样本的编号
+    #如果num_example = 5 那么range = 0，1，2，3，4
+    #list就是把这些编号编程列表
     indices = list(range(num_example))
+    #打乱所有样本编号列表
+    #shuffle的重点是：元素不变，只改变顺序
     random.shuffle(indices)
+    #range(开始位置，结束位置，步长)
+    #i = 当前批次的起始位置
     for i in range(0, num_example, batch_size):
         batch_size = torch.tensor(
+            #从i的位置开始，取到i + batch_size为止
+            #i 和 i+batch_size 是“位置范围” 切片返回的是这些位置上的“值”
+            #有min是告诉你最多取到样本总数 num_examples
             indices[i: min(i + batch_size, num_example)])
+#features和labels必须用同一组batch_indices，是为了保证每个样本的特征和他自己的标签一一对应
+#用同一批编号，同时取出这一批样本的输入 X 和真实答案 y
+# yield 感觉就是每次吐出一批数据，然后暂停，下一次循环再接着吐下一批    
         yield features[batch_size], labels[batch_size]
 
+#一次拿一小批数据
+#每次取出来10个样本，不是1000个
 batch_size = 10 
 
 for X, y in data_iter(batch_size, features, labels):
     print(X, '\n', y)
+    #只看第一批数据，看完就跳出循环
     break
 
 w = torch.normal(0, 0.01, size=(2,1), requires_grad=True)
 b = torch.zeros(1, requires_grad=True)
+
