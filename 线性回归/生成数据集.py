@@ -17,6 +17,7 @@ def synthetic_data(w, b, num_examples):
 
 
 #先设置一个真实参数权重w和偏置b
+#2个权重
 true_w = torch.tensor([2, -3.4])
 true_b = 4.2
 #生成1000个样本
@@ -68,6 +69,22 @@ for X, y in data_iter(batch_size, features, labels):
     #只看第一批数据，看完就跳出循环
     break
 
+#torch.normal 从正态分布里面随机取数， 0 是均值， 0.01 是标准差 size=(2,1) 表示生成出来的w是2行1列
 w = torch.normal(0, 0.01, size=(2,1), requires_grad=True)
 b = torch.zeros(1, requires_grad=True)
+
+def linreg(X, w, b):
+    #定义模型
+    return torch.matmul(X, w) + b
+
+def squared_loss(y_hat, y):
+    #均方损失
+    #y_hat：模型预测值
+    #y: 真实值
+    return (y_hat - y.reshape(y_hat.shape)) ** 2 / 2
+
+# 优化算法的任务，就是根据梯度更新参数，然损失变小
+
+
+
 
